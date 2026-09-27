@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DayNest</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    color:#1f2937;
+    min-height:100vh;
+}
+
+header{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    padding:28px 20px;
+}
+
+.header-content{
+    max-width:1100px;
+    margin:auto;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:800;
+}
+
+.subtitle{
+    margin-top:7px;
+    opacity:.9;
+}
+
+.container{
+    max-width:1100px;
+    margin:25px auto;
+    padding:0 18px;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.stat h3{
+    font-size:14px;
+    color:#6b7280;
+    margin-bottom:10px;
+}
+
+.stat strong{
+    font-size:28px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:20px;
+}
+
+.card h2{
+    margin-bottom:16px;
+    font-size:20px;
+}
+
+input,textarea{
+    width:100%;
+    border:1px solid #dbe1ea;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:10px;
+    font-size:15px;
+    outline:none;
+}
+
+input:focus,textarea:focus{
+    border-color:#6366f1;
+}
+
+button{
+    border:none;
+    border-radius:10px;
+    padding:11px 16px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.primary{
+    background:#4f46e5;
+    color:white;
+}
+
+.primary:hover{
+    background:#4338ca;
+}
+
+.item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    border-bottom:1px solid #eef0f4;
+}
+
+.item:last-child{
+    border-bottom:none;
+}
+
+.item-text{
+    flex:1;
+}
+
+.completed{
+    text-decoration:line-through;
+    color:#9ca3af;
+}
+
+.delete{
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:7px 10px;
+}
+
+.note{
+    background:#faf5ff;
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.goal{
+    background:#eff6ff;
+    padding:14px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.expense{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.empty{
+    color:#9ca3af;
+    text-align:center;
+    padding:15px;
+}
+
+footer{
+    text-align:center;
+    color:#9ca3af;
+    padding:30px;
+}
+
+@media(max-width:800px){
+    .dashboard{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:480px){
+    .dashboard{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .stat strong{
+        font-size:22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="header-content">
+<div class="logo">🏡 DayNest</div>
+<div class="subtitle">Organize your day. Reach your goals.</div>
+</div>
+</header>
+
+<div class="container">
+
+<div class="dashboard">
+
+<div class="stat">
+<h3>Tasks</h3>
+<strong id="taskCount">0</strong>
+</div>
+
+<div class="stat">
+<h3>Completed</h3>
+<strong id="completedCount">0</strong>
+</div>
+
+<div class="stat">
+<h3>Goals</h3>
+<strong id="goalCount">0</strong>
+</div>
+
+<div class="stat">
+<h3>Expenses</h3>
+<strong id="expenseTotal">$0</strong>
+</div>
+
+</div>
+
+<div class="grid">
+
+<div>
+
+<div class="card">
+<h2>✅ Today's Tasks</h2>
+
+<input id="taskInput" type="text" placeholder="What do you need to do?">
+
+<button class="primary" onclick="addTask()">Add Task</button>
+
+<div id="taskList"></div>
+</div>
+
+
+<div class="card">
+<h2>🎯 My Goals</h2>
+
+<input id="goalInput" type="text" placeholder="Enter a goal">
+
+<button class="primary" onclick="addGoal()">Add Goal</button>
+
+<div id="goalList"></div>
+</div>
+
+</div>
+
+
+<div>
+
+<div class="card">
+<h2>📝 Quick Notes</h2>
+
+<textarea id="noteInput" rows="4" placeholder="Write something important..."></textarea>
+
+<button class="primary" onclick="addNote()">Save Note</button>
+
+<div id="noteList"></div>
+</div>
+
+
+<div class="card">
+<h2>💰 Daily Expenses</h2>
+
+<input id="expenseName" type="text" placeholder="Expense name">
+
+<input id="expenseAmount" type="number" placeholder="Amount">
+
+<button class="primary" onclick="addExpense()">Add Expense</button>
+
+<div id="expenseList"></div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+DayNest © 2026 — Your simple personal organizer
+</footer>
+
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("daynest_tasks")) || [];
+let goals = JSON.parse(localStorage.getItem("daynest_goals")) || [];
+let notes = JSON.parse(localStorage.getItem("daynest_notes")) || [];
+let expenses = JSON.parse(localStorage.getItem("daynest_expenses")) || [];
+
+
+function saveData(){
+    localStorage.setItem("daynest_tasks",JSON.stringify(tasks));
+    localStorage.setItem("daynest_goals",JSON.stringify(goals));
+    localStorage.setItem("daynest_notes",JSON.stringify(notes));
+    localStorage.setItem("daynest_expenses",JSON.stringify(expenses));
+}
+
+
+function addTask(){
+
+    const input=document.getElementById("taskInput");
+    const text=input.value.trim();
+
+    if(!text) return;
+
+    tasks.push({
+        id:Date.now(),
+        text:text,
+        completed:false
+    });
+
+    input.value="";
+    saveData();
+    render();
+}
+
+
+function toggleTask(id){
+
+    tasks=tasks.map(task=>{
+        if(task.id===id){
+            task.completed=!task.completed;
+        }
+        return task;
+    });
+
+    saveData();
+    render();
+}
+
+
+function deleteTask(id){
+
+    tasks=tasks.filter(task=>task.id!==id);
+
+    saveData();
+    render();
+}
+
+
+function addGoal(){
+
+    const input=document.getElementById("goalInput");
+    const text=input.value.trim();
+
+    if(!text) return;
+
+    goals.push({
+        id:Date.now(),
+        text:text
+    });
+
+    input.value="";
+    saveData();
+    render();
+}
+
+
+function deleteGoal(id){
+
+    goals=goals.filter(goal=>goal.id!==id);
+
+    saveData();
+    render();
+}
+
+
+function addNote(){
+
+    const input=document.getElementById("noteInput");
+    const text=input.value.trim();
+
+    if(!text) return;
+
+    notes.unshift({
+        id:Date.now(),
+        text:text
+    });
+
+    input.value="";
+    saveData();
+    render();
+}
+
+
+function deleteNote(id){
+
+    notes=notes.filter(note=>note.id!==id);
+
+    saveData();
+    render();
+}
+
+
+function addExpense(){
+
+    const name=document.getElementById("expenseName").value.trim();
+    const amount=parseFloat(document.getElementById("expenseAmount").value);
+
+    if(!name || isNaN(amount)) return;
+
+    expenses.push({
+        id:Date.now(),
+        name:name,
+        amount:amount
+    });
+
+    document.getElementById("expenseName").value="";
+    document.getElementById("expenseAmount").value="";
+
+    saveData();
+    render();
+}
+
+
+function deleteExpense(id){
+
+    expenses=expenses.filter(expense=>expense.id!==id);
+
+    saveData();
+    render();
+}
+
+
+function render(){
+
+    const taskList=document.getElementById("taskList");
+
+    if(tasks.length===0){
+        taskList.innerHTML='<div class="empty">No tasks yet.</div>';
+    }else{
+        taskList.innerHTML=tasks.map(task=>`
+            <div class="item">
+                <input type="checkbox"
+                    ${task.completed ? "checked" : ""}
+                    onchange="toggleTask(${task.id})"
+                    style="width:auto;margin:0">
+
+                <div class="item-text ${task.completed ? "completed" : ""}">
+                    ${escapeHTML(task.text)}
+                </div>
+
+                <button class="delete"
+                    onclick="deleteTask(${task.id})">
+                    Delete
+                </button>
+            </div>
+        `).join("");
+    }
+
+
+    const goalList=document.getElementById("goalList");
+
+    if(goals.length===0){
+        goalList.innerHTML='<div class="empty">No goals yet.</div>';
+    }else{
+        goalList.innerHTML=goals.map(goal=>`
+            <div class="goal">
+                ${escapeHTML(goal.text)}
+                <button class="delete"
+                    onclick="deleteGoal(${goal.id})"
+                    style="float:right">
+                    Delete
+                </button>
+            </div>
+        `).join("");
+    }
+
+
+    const noteList=document.getElementById("noteList");
+
+    if(notes.length===0){
+        noteList.innerHTML='<div class="empty">No notes yet.</div>';
+    }else{
+        noteList.innerHTML=notes.map(note=>`
+            <div class="note">
+                ${escapeHTML(note.text)}
+                <br><br>
+                <button class="delete"
+                    onclick="deleteNote(${note.id})">
+                    Delete
+                </button>
+            </div>
+        `).join("");
+    }
+
+
+    const expenseList=document.getElementById("expenseList");
+
+    if(expenses.length===0){
+        expenseList.innerHTML='<div class="empty">No expenses yet.</div>';
+    }else{
+        expenseList.innerHTML=expenses.map(expense=>`
+            <div class="expense">
+                <span>${escapeHTML(expense.name)}</span>
+
+                <strong>
+                    $${expense.amount.toFixed(2)}
+                </strong>
+
+                <button class="delete"
+                    onclick="deleteExpense(${expense.id})">
+                    Delete
+                </button>
+            </div>
+        `).join("");
+    }
+
+
+    document.getElementById("taskCount").textContent=tasks.length;
+
+    document.getElementById("completedCount").textContent=
+        tasks.filter(task=>task.completed).length;
+
+    document.getElementById("goalCount").textContent=goals.length;
+
+    const total=expenses.reduce(
+        (sum,expense)=>sum+expense.amount,0
+    );
+
+    document.getElementById("expenseTotal").textContent=
+        "$"+total.toFixed(2);
+}
+
+
+function escapeHTML(text){
+
+    const div=document.createElement("div");
+    div.textContent=text;
+
+    return div.innerHTML;
+}
+
+
+render();
+
+</script>
+
+</body>
+</html>
